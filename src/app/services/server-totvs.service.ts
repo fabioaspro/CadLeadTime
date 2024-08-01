@@ -26,17 +26,13 @@ export class ServerTotvsService {
   //------------ Colunas Grid Saldo Terceiro
   obterColunas(): Array<PoTableColumn> {
     return [
+      { property: 'codEstabel',  label: "Estab", visible:false},
       { property: 'nomeEstabel', label: "Estab" },
-      { property: 'leadTime', label: "Lead Time" },
-      { property: 'Inclusao', label: "Inclusão"},
-      { property: 'Alteracao', label: "Alteração"},
+      { property: 'leadTime',    label: "Lead Time" },
+      { property: 'Inclusao',    label: "Inclusão"},
+      { property: 'Alteracao',   label: "Alteração"},
       
     ];
-  }
-
-  //---------------------- Obter Lista
-  public Obter(params?: any){
-    return this.http.get(`${this._url}/ObterCalcEstab`, {params:params, headers:headersTotvs}).pipe(take(1));
   }
 
   //Retorno transformado no formato {label: xxx, value: yyyy}
@@ -49,6 +45,27 @@ export class ServerTotvsService {
                   take(1));
   }
 
+  //---------------------- Obter Lista Completa
+  public Obter(params?: any){
+    return this.http.get(`${this._url}/ObterLT`, {params:params, headers:headersTotvs}).pipe(take(1));
+  }
+
+  //---------------------- Obter Linha Editada
+  public ObterID(params?: any){
+    return this.http.get(`${this._url}/ObterLTId`, {params:params, headers:headersTotvs}).pipe(take(1));
+  }
+  //---------------------- Salvar registro
+  public Salvar(params?: any){
+    return this.http.post(`${this._url}/SalvarLT`, params, {headers:headersTotvs})
+                .pipe(take(1));
+  }
+
+  //---------------------- Deletar registro
+  public Deletar(params?: any){
+    return this.http.get(`${this._url}/DeletarLT`, {params:params, headers:headersTotvs})
+                    .pipe(take(1));
+  }
+  
   //Ordenacao campos num array
   public ordenarCampos = (fields: any[]) =>
     (a: { [x: string]: number }, b: { [x: string]: number }) =>

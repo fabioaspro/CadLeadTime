@@ -3,8 +3,8 @@ import { HttpClientModule } from '@angular/common/http';
 import { ChangeDetectorRef, Component, inject, OnInit, ViewChild, } from '@angular/core';
 import { RouterOutlet, Router } from '@angular/router';
 import { Subscription } from 'rxjs';
-import { FormBuilder, FormGroup, UntypedFormBuilder, UntypedFormGroup, Validators} from '@angular/forms';
-import { PoModule, PoTableColumn, PoTableModule, PoButtonModule, PoMenuItem, PoMenuModule, PoModalModule, PoPageModule, PoToolbarModule, PoTableAction, PoModalAction,} from '@po-ui/ng-components';
+import { ReactiveFormsModule, FormsModule, FormBuilder, FormGroup, UntypedFormBuilder, UntypedFormGroup, Validators} from '@angular/forms';
+import { PoModule, PoTableColumn, PoTableModule, PoButtonModule, PoMenuItem, PoMenuModule, PoModalModule, PoPageModule, PoToolbarModule, PoTableAction, PoModalAction, PoDialogService, PoNotificationService,} from '@po-ui/ng-components';
 import { ServerTotvsService } from '../services/server-totvs.service';
 
 @Component({
@@ -17,6 +17,7 @@ import { ServerTotvsService } from '../services/server-totvs.service';
     PoTableModule,
     PoMenuModule,
     PoModule,
+    FormsModule,
     PoButtonModule,
     PoToolbarModule,
     PoMenuModule,
@@ -29,9 +30,11 @@ import { ServerTotvsService } from '../services/server-totvs.service';
 export class ListComponent {
 
   private srvTotvs = inject(ServerTotvsService);
+  private srvNotification = inject(PoNotificationService);
+  private srvDialog = inject(PoDialogService);
   private router = inject(Router)
- 
-    //Variaveis 
+  
+  //Variaveis 
   loadTela: boolean = false
   tituloTela!:string
   //lista: any;
@@ -67,6 +70,8 @@ export class ListComponent {
     action: () => { //this.cadModal?.close()
        }
   }
+  formBuilder: any;
+  nomeEstabel: string | undefined;
 
   ngOnInit(): void {
     
@@ -103,17 +108,43 @@ export class ListComponent {
   //---Editar registro
   onEditar(obj: any | null) {    
 
-    //Chamada para testar parametro
-    //this.onEditar(20)
+    /*
+    this.nomeEstabel = ''
+
+    if ((obj !== null) && (obj['$showAction'] !== undefined))
+       delete obj['$showAction']
+
+    if (obj !== null) {
+      this.nomeEstabel = obj.nomeEstabel
+      this.tipoAcao='E'
+      this.form.patchValue(obj)
+    }*/
 
     //Criar um registro novo passando 0 o ID
-    this.router.navigate(['form/' + obj ]) 
+    
+    this.router.navigate(['form/' + obj.codEstabel ]) 
 
   }
 
-  //---Apagar Registro
-  onDeletar(){
-
+  //---Deletar registro
+  onDeletar(obj: any | null) {
+    let paramTela:any={codEstabel:obj.codEstabel}
+    
+    this.srvDialog.confirm({
+      title: "DELETAR REGISTRO",
+      message: `Confirma deleção do registro: ${obj.nomeEstabel} ?`,
+      confirm: () => {
+        this.loadTela = true
+        this.srvTotvs.Deletar(paramTela).subscribe({
+          next: (response: any) => {
+            this.srvNotification.success('Registro eliminado com sucesso')
+            this.listar()
+          },
+         // error: (e) => this.srvNotification.error('Ocorreu um erro na requisição'),
+        })
+      },
+      cancel: () => this.srvNotification.error("Cancelada pelo usuário")
+    })
   }
 
   //---Salvar Registro

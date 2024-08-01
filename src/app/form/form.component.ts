@@ -36,6 +36,8 @@ import { ServerTotvsService } from '../services/server-totvs.service';
 export class FormComponent {
 
   private srvTotvs = inject(ServerTotvsService);
+  private srvNotification = inject(PoNotificationService);
+  private srvDialog = inject(PoDialogService);
   private formBuilder = inject(FormBuilder);
   private router = inject(Router)
  
@@ -44,6 +46,8 @@ export class FormComponent {
   //Variaveis
   dadosInclusao!: string;
   dadosAlteracao!: string;
+  tipoAcao!: string;
+  nomeEstabel!: string;
 
   //ListasCombo
   listaEstabelecimentos!: any[]
@@ -58,13 +62,29 @@ export class FormComponent {
   });
 
   onSalvar() {
+    if (!this.form.valid) {
+      this.srvNotification.error('Preencha todos os campos');
+      return
+    }
 
-    //Salva o Registro no Banco de Dados
-    //
+    //Dados da tela
+    let paramsTela: any = { paramsTela: this.form.value }
+    //Chamar o servico
+    this.srvTotvs.Salvar(paramsTela).subscribe({
+      next: (response: any) => {
+        
+        //this.listar();
+        this.srvNotification.success('Registro Incluido com sucesso')
+      },
+      error: (e) => {
+       // this.srvNotification.error('Ocorreu um erro na requisição ')
+      },
+    })
+
     //Volta ao form List
-    this.router.navigate(['list'])    
-
+    this.router.navigate(['list']) 
   }
+
   onCancelar() {
     
     //Volta ao form List
@@ -77,6 +97,7 @@ export class FormComponent {
     //Carregar combo de estabelecimentos
     this.srvTotvs.ObterEstabelecimentos().subscribe({
       next: (response: any) => {
+        console.log(response)
         this.listaEstabelecimentos = (response as any[]).sort(
           this.srvTotvs.ordenarCampos(['label']))
       },
@@ -87,20 +108,35 @@ export class FormComponent {
     });
 
     this.route.params.subscribe(params => {
-      if (params['id']) {
 
-        this.form.controls['codEstabel'].setValue ("131");
-        this.form.controls['leadTime'].setValue ("10");
-        this.form.controls['Inclusao'].setValue ("super - 30/04/2024");
-        this.form.controls['Alteracao'].setValue ("super - 30/04/2024");
+      if (params['id'] !== '0') { //Alteracao
 
+        //this.form.controls['codEstabel'].setValue (params['id']);
+        //this.form.controls['leadTime'].setValue (params['id']);
+        //this.form.controls['Inclusao'].setValue ("super - 02/08/2024");
+        //this.form.controls['Alteracao'].setValue (params['id']);
+
+        this.tipoAcao = "E"
+        this.srvTotvs.ObterID({codEstabel: params['id']}).subscribe({
+            next: (response: any) => {
+              this.form.patchValue(response.items[0])
+              this.form.controls['Alteracao'].setValue ("super - 02/08/2024")
+              this.nomeEstabel = response.items[0].nomeEstabel
+
+            },
+            error: (e) => {
+              //this.srvNotification.error('Ocorreu um erro na requisição')
+              return
+            },
+          })
       }
-      else {
+      else { //Inclusao
 
-        this.form.controls['codEstabel'].setValue ("131 CAMPINAS");
-        this.form.controls['leadTime'].setValue ("10");
-        this.form.controls['Inclusao'].setValue ("super - 30/04/2024");
-        this.form.controls['Alteracao'].setValue ("super - 30/04/2024");
+        this.tipoAcao = "I"
+        this.form.controls['codEstabel'].setValue ("");
+        this.form.controls['leadTime'].setValue ("");
+        this.form.controls['Inclusao'].setValue ("super - 01/08/2024");
+        this.form.controls['Alteracao'].setValue ("");
 
       }
 
