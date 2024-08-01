@@ -19,8 +19,8 @@ export class ServerTotvsService {
 
   //---------------------- Variaveis Globais
   public ObterVariaveisGlobais(params?: any){
-    //return this.http.get(`${this._url}/ObterVariaveisGlobais`, {params, headers:headersTotvs})
-    //               .pipe(take(1));
+    return this.http.get(`${this._url}/ObterVariaveisGlobais`, {params, headers:headersTotvs})
+                   .pipe(take(1));
   }
 
   //------------ Colunas Grid Saldo Terceiro
