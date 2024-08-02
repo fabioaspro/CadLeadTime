@@ -1,24 +1,27 @@
+<po-widget>
+  <div class="po-md-12">
+    <po-button (p-click)="ngOnInit()" p-icon="bi bi-arrow-clockwise" p-label="Atualizar" p-tooltip="Atualizar Informações Tela"></po-button>
+    <po-button p-label="Novo LeadTime" (p-click)="onNovo()" p-icon="bi bi-plus" p-kind="primary"></po-button>
+  </div>
+</po-widget>
 
-<div class="po-md-12">
-  <po-button (p-click)="ngOnInit()" p-icon="bi bi-arrow-clockwise" p-label="Atualizar" p-tooltip="Atualizar Informações Tela"></po-button>
-  <po-button p-label="Novo LeadTime" (p-click)="onNovo()" p-icon="bi bi-plus" p-kind="primary"></po-button>
-</div>
- 
-<div class="po-md-12">
-  <po-table [p-items]="lista" 
-            [p-actions]="opcoes" 
-            [p-loading]="loadTela" 
-            [p-striped]="true" 
-            [p-columns]="colunas"
-            [p-hide-table-search]="false" 
-            [p-hide-columns-manager]="true" 
-            p-container="true"
-            [p-height]="400"
-            />
+<po-widget>
+  <div class="po-md-12">
+    <po-table [p-items]="lista" 
+              [p-actions]="opcoes" 
+              [p-loading]="loadTela" 
+              [p-striped]="true" 
+              [p-columns]="colunas"
+              [p-hide-table-search]="false" 
+              [p-hide-columns-manager]="true" 
+              p-container="true"
+              [p-height]="300"
+              /> </div>
 
-<div style="margin-left: 20px;">
-    <div>
-        <i class="bi bi-exclamation-circle" style="float:left">&nbsp;</i>
-        <po-info p-label="Os parâmetros são utilizados no programa de Cálculo do Banco de Reparos" style="display: block;"></po-info>
-    </div>
-</div>
+  <div style="margin-left: 20px;">
+      <div>
+          <i class="bi bi-exclamation-circle" style="float:left">&nbsp;</i>
+          <po-info p-label="Os parâmetros são utilizados no programa de Cálculo do Banco de Reparos" style="display: block;"></po-info>
+      </div>
+  </div>
+</po-widget>
